@@ -315,7 +315,11 @@ app.get('/setup-admin', async (req, res) => {
             fullName: 'Super Admin',
             role: 'admin',
             email: 'admin@college.com',
-            mobileNumber: '9999999999'
+            mobileNumber: '9999999999',
+            // ✅ Niche wali line add kar di hai:
+            dateOfAdmission: new Date(), 
+            feesPaid: 0,
+            totalFees: 0
         });
         res.send('<h3>✅ Admin Ban Gaya!</h3><p>User: admin</p><p>Pass: admin123</p><a href="/">Login</a>');
     } catch (err) {
