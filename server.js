@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const path = require('path');
 const bodyParser = require('body-parser');
 const multer = require('multer'); 
-const fs = require('fs'); // Folder creation ke liye zaroori hai
+const fs = require('fs');
 
 // Models Import
 const User = require('./models/User'); 
@@ -15,7 +15,7 @@ const Notice = require('./models/Notice');
 const FeePayment = require('./models/FeePayment'); 
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000; // Render ka Port lega
 
 // ====================================================
 // 2. MIDDLEWARE
@@ -34,14 +34,20 @@ async function getAdminUser(username = null) {
 }
 
 // ====================================================
-// 3. DATABASE CONNECTION
+// 3. DATABASE CONNECTION (UPDATED FOR RENDER) 🟢
 // ====================================================
-mongoose.connect('mongodb://localhost:27017/collegeERP')
-  .then(() => console.log('✅ MongoDB Connected!'))
+// Localhost hata diya hai, ab ye Render ka Environment Variable use karega
+const dbOptions = {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+};
+
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log('✅ MongoDB Atlas Connected!'))
   .catch(err => console.log('❌ DB Error:', err));
 
 // ====================================================
-// ✅ AUTO-CREATE FOLDERS (Important Fix)
+// ✅ AUTO-CREATE FOLDERS
 // ====================================================
 const uploadDirs = [
     path.join(__dirname, 'public/uploads/notices'),
@@ -135,9 +141,9 @@ app.post('/admin/add-student', uploadStudentPhoto.single('studentPhoto'), async 
     try {
         const { 
             username, password, course, semester, dateOfAdmission, 
-            fullName, dateOfBirth, email, mobileNumber,           
+            fullName, dateOfBirth, email, mobileNumber,            
             guardianName, guardianMobile, address, city, state, pincode, 
-            totalFees, feesPaid                                   
+            totalFees, feesPaid                                  
         } = req.body;
 
         const existingUser = await User.findOne({ $or: [{ username }, { email }] });
@@ -145,7 +151,6 @@ app.post('/admin/add-student', uploadStudentPhoto.single('studentPhoto'), async 
             return res.send("<h3>Error: Student Exists!</h3><a href='/admin/add-student'>Back</a>");
         }
 
-        // Photo Path
         let photoPath = "https://i.ibb.co/6P0qXy2/dummy-profile.png"; 
         if (req.file) {
             photoPath = "/uploads/students/" + req.file.filename;
@@ -246,7 +251,7 @@ app.post('/admin/record-payment', async (req, res) => {
     } catch (err) { res.send("Error: " + err.message); }
 });
 
-// --- Upload Notices (File Optional Logic) ---
+// --- Upload Notices ---
 app.get('/admin/upload-notices', async (req, res) => {
     const user = await getAdminUser();
     const notices = await Notice.find({}).sort({ date: -1 }); 
@@ -254,7 +259,7 @@ app.get('/admin/upload-notices', async (req, res) => {
 });
 
 app.post('/admin/upload-notice', uploadNotice.single('uploadedFile'), async (req, res) => {
-    let fileName = req.file ? req.file.filename : null; // File optional handling
+    let fileName = req.file ? req.file.filename : null; 
     await Notice.create({ 
         title: req.body.title, 
         fileName: fileName, 
@@ -263,21 +268,17 @@ app.post('/admin/upload-notice', uploadNotice.single('uploadedFile'), async (req
     res.redirect('/admin/upload-notices');
 });
 
-// ==========================================
-// 🎓 STUDENT DASHBOARD (FIXED: Notices Passed)
-// ==========================================
+// --- Student Dashboard ---
 app.get('/student/dashboard', async (req, res) => {
     try {
         const user = await User.findOne({ username: req.query.user, role: 'student' });
         if(!user) return res.redirect('/');
 
-        // 1. Notices Fetch karo
         const notices = await Notice.find({}).sort({ date: -1 });
 
-        // 2. User + Notices dono bhejo
         res.render('student_dashboard.html', { 
             user: user,
-            notices: notices // <--- Yeh zaroori hai error hatane ke liye
+            notices: notices 
         });
 
     } catch(e) { 
@@ -287,6 +288,29 @@ app.get('/student/dashboard', async (req, res) => {
 });
 
 app.get('/logout', (req, res) => res.redirect('/'));
+
+// ==========================================
+// 🛠️ ADMIN SETUP ROUTE (Ek baar run karein)
+// ==========================================
+app.get('/setup-admin', async (req, res) => {
+    try {
+        const existingAdmin = await User.findOne({ username: 'admin' });
+        if (existingAdmin) {
+            return res.send('<h3>Admin pehle se hai!</h3><a href="/">Login Karein</a>');
+        }
+        await User.create({
+            username: 'admin',
+            password: 'admin123', // Admin Password
+            fullName: 'Super Admin',
+            role: 'admin',
+            email: 'admin@college.com',
+            mobileNumber: '9999999999'
+        });
+        res.send('<h3>✅ Admin Ban Gaya!</h3><p>User: admin</p><p>Pass: admin123</p><a href="/">Login</a>');
+    } catch (err) {
+        res.send("Error: " + err.message);
+    }
+});
 
 // --- Server Start ---
 app.listen(PORT, () => {
