@@ -8,14 +8,15 @@ const bodyParser = require('body-parser');
 const multer = require('multer'); 
 const fs = require('fs');
 
-// Models Import
+// Models Import (Ensure ye files models folder mein hon)
 const User = require('./models/User'); 
 const FeeStructure = require('./models/FeeStructure'); 
 const Notice = require('./models/Notice'); 
 const FeePayment = require('./models/FeePayment'); 
 
 const app = express();
-const PORT = process.env.PORT || 3000; // Render ka Port lega
+// Render ka Port lega, warna 3000
+const PORT = process.env.PORT || 3000; 
 
 // ====================================================
 // 2. MIDDLEWARE
@@ -23,6 +24,8 @@ const PORT = process.env.PORT || 3000; // Render ka Port lega
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
+
+// View Engine Setup (HTML use kar rahe ho EJS ke sath)
 app.set('views', path.join(__dirname, 'views'));
 app.engine('html', require('ejs').renderFile); 
 app.set('view engine', 'html'); 
@@ -36,7 +39,7 @@ async function getAdminUser(username = null) {
 // ====================================================
 // 3. DATABASE CONNECTION (UPDATED FOR RENDER) 🟢
 // ====================================================
-// Localhost hata diya hai, ab ye Render ka Environment Variable use karega
+// Localhost hata diya hai. Ab ye Render ke "Environment Variable" se link uthayega.
 const dbOptions = {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -47,7 +50,7 @@ mongoose.connect(process.env.MONGO_URI)
   .catch(err => console.log('❌ DB Error:', err));
 
 // ====================================================
-// ✅ AUTO-CREATE FOLDERS
+// ✅ AUTO-CREATE FOLDERS (Render Crash Fix)
 // ====================================================
 const uploadDirs = [
     path.join(__dirname, 'public/uploads/notices'),
@@ -91,12 +94,19 @@ app.post('/login', async (req, res) => {
     const { username, password } = req.body;
     try {
         const user = await User.findOne({ username });
+        
+        // Simple password check (Security Note: Production me bcrypt use karna chahiye)
         if (!user || user.password !== password) {
-            return res.send('<h3>Login Failed!</h3><a href="/">Try Again</a>');
+            return res.send('<h3>Login Failed! Incorrect Username or Password.</h3><a href="/">Try Again</a>');
         }
+        
         if (user.role === 'admin') res.redirect(`/admin/dashboard?user=${user.username}`);
         else res.redirect(`/student/dashboard?user=${user.username}`);
-    } catch (err) { res.status(500).send('Server Error'); }
+        
+    } catch (err) { 
+        console.log(err);
+        res.status(500).send('Server Error: ' + err.message); 
+    }
 });
 
 // --- Admin Dashboard ---
@@ -109,7 +119,7 @@ app.get('/admin/dashboard', async (req, res) => {
         const noticeCount = await Notice.countDocuments({});
         const facultyCount = await User.countDocuments({ role: 'faculty' }); 
         
-        // Pending Fees
+        // Pending Fees Calculation
         const allStudents = await User.find({ role: 'student' });
         let totalPendingFees = 0;
         allStudents.forEach(stu => {
@@ -143,7 +153,7 @@ app.post('/admin/add-student', uploadStudentPhoto.single('studentPhoto'), async 
             username, password, course, semester, dateOfAdmission, 
             fullName, dateOfBirth, email, mobileNumber,            
             guardianName, guardianMobile, address, city, state, pincode, 
-            totalFees, feesPaid                                  
+            totalFees, feesPaid                                   
         } = req.body;
 
         const existingUser = await User.findOne({ $or: [{ username }, { email }] });
@@ -292,6 +302,7 @@ app.get('/logout', (req, res) => res.redirect('/'));
 // ==========================================
 // 🛠️ ADMIN SETUP ROUTE (Ek baar run karein)
 // ==========================================
+// Is link ko browser me kholna: https://your-site.onrender.com/setup-admin
 app.get('/setup-admin', async (req, res) => {
     try {
         const existingAdmin = await User.findOne({ username: 'admin' });
@@ -300,7 +311,7 @@ app.get('/setup-admin', async (req, res) => {
         }
         await User.create({
             username: 'admin',
-            password: 'admin123', // Admin Password
+            password: 'admin123', // Password
             fullName: 'Super Admin',
             role: 'admin',
             email: 'admin@college.com',
@@ -314,5 +325,5 @@ app.get('/setup-admin', async (req, res) => {
 
 // --- Server Start ---
 app.listen(PORT, () => {
-    console.log(`🚀 Server Running on http://localhost:${PORT}`);
+    console.log(`🚀 Server Running on Port ${PORT}`);
 });
