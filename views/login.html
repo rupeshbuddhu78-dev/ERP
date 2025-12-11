@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College ERP Login</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1f4068, #162447); 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .login-container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-container h2 {
+            color: #1f4068;
+            margin-bottom: 35px;
+            font-size: 28px;
+            border-bottom: 2px solid #ccc;
+            padding-bottom: 10px;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box; 
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .input-group input:focus {
+            border-color: #1f4068;
+            outline: none;
+        }
+
+        .login-btn {
+            background-color: #1f4068;
+            color: white;
+            padding: 14px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 18px;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.1s;
+        }
+
+        .login-btn:hover {
+            background-color: #0b1f3c;
+        }
+        
+        .error-message {
+            color: red;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+    </style>
+    </head>
+<body>
+    <div class="login-container">
+        <h2>Dr. Zakir Husain ERP Login</h2>
+        
+        <form id="loginForm" action="/login" method="POST">
+            <div class="input-group">
+                <label for="username">Registration No. / ID</label>
+                <input type="text" id="username" name="username" placeholder="Enter ID or Reg. No." required>
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter Password" required>
+            </div>
+            <p id="errorMsg" class="error-message"></p>
+            <button type="submit" class="login-btn">LOGIN</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMsg = document.getElementById('errorMsg');
+            
+            errorMsg.textContent = ''; // Clear previous error
+
+            if (username.length < 4 || password.length < 4) {
+                errorMsg.textContent = 'Username and Password must be at least 4 characters long.';
+                event.preventDefault(); // Form submit hone se rok dega
+                return false;
+            }
+            
+            // Agar yahan tak sab theek hai, toh form submit ho jaayega aur Express Server use handle karega.
+        });
+    </script>
+</body>
+</html>

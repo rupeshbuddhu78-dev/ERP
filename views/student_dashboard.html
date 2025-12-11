@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard | ERP</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #007bff; /* Student Blue */
+            --secondary-color: #f4f7f6; /* Light BG */
+            --header-color: #343a40; /* Dark Header */
+            --card-bg: white;
+            --accent-green: #28a745;
+            --accent-red: #dc3545;
+            --accent-yellow: #ffc107;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0; padding: 0; background-color: var(--secondary-color); color: #333;
+        }
+
+        /* --- Header --- */
+        .top-header {
+            background-color: var(--header-color); color: white; padding: 15px 30px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100;
+        }
+        .top-header h1 { margin: 0; font-size: 1.4rem; display: flex; align-items: center; gap: 10px; }
+        .logout-btn {
+            background-color: var(--accent-red); color: white; padding: 8px 15px; border: none;
+            border-radius: 5px; text-decoration: none; font-size: 0.9rem; transition: 0.3s;
+        }
+        .logout-btn:hover { background-color: #c82333; }
+
+        /* --- Main Layout --- */
+        .main-content {
+            max-width: 1200px; margin: 30px auto; padding: 0 20px;
+            display: grid; grid-template-columns: 2fr 1fr; gap: 25px; /* Left: Info, Right: Notices */
+        }
+
+        /* --- Welcome Section (Profile) --- */
+        .welcome-section {
+            background-color: var(--card-bg); padding: 25px; border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 25px;
+            border-left: 5px solid var(--primary-color); margin-bottom: 25px;
+        }
+        .user-photo {
+            width: 110px; height: 110px; border-radius: 50%; object-fit: cover;
+            border: 4px solid #e9ecef; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .welcome-info h2 { margin: 0 0 5px 0; color: var(--primary-color); }
+        .welcome-info p { margin: 2px 0; color: #666; font-size: 0.95rem; }
+        .status-badge { 
+            background: #e2e6ea; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 0.85rem; color: #495057; 
+        }
+
+        /* --- Info Grid --- */
+        .info-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 25px; /* Two columns for cards */
+        }
+
+        .info-card {
+            background: var(--card-bg); padding: 25px; border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: transform 0.2s;
+        }
+        .info-card:hover { transform: translateY(-3px); }
+        
+        .card-title {
+            border-bottom: 2px solid #f1f1f1; padding-bottom: 10px; margin-top: 0; margin-bottom: 15px;
+            color: #444; font-size: 1.1rem; display: flex; align-items: center; gap: 10px;
+        }
+        .card-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.95rem; }
+        .card-label { color: #777; font-weight: 500; }
+        .card-val { font-weight: 600; color: #333; text-align: right; }
+
+        /* Fees Specifics */
+        .fees-paid { color: var(--accent-green); }
+        .fees-due { color: var(--accent-red); }
+
+        /* --- Right Sidebar (Notices) --- */
+        .notice-board {
+            background: var(--card-bg); border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            overflow: hidden; height: fit-content;
+        }
+        .notice-header {
+            background: var(--accent-yellow); color: #333; padding: 15px 20px; font-weight: bold;
+            display: flex; align-items: center; gap: 10px; font-size: 1.1rem;
+        }
+        .notice-list { padding: 0; list-style: none; margin: 0; max-height: 500px; overflow-y: auto; }
+        .notice-item {
+            padding: 15px 20px; border-bottom: 1px solid #f1f1f1; transition: background 0.2s;
+        }
+        .notice-item:hover { background: #fafafa; }
+        .notice-date { font-size: 0.75rem; color: #888; display: block; margin-bottom: 4px; }
+        .notice-text { font-weight: 600; color: #333; display: block; margin-bottom: 8px; line-height: 1.4; }
+        
+        .download-link {
+            display: inline-flex; align-items: center; gap: 6px; font-size: 0.85rem;
+            color: var(--primary-color); text-decoration: none; font-weight: 500;
+            background: #e7f1ff; padding: 4px 10px; border-radius: 20px;
+        }
+        .download-link:hover { background: #d0e1fd; }
+
+        /* --- Responsive CSS --- */
+        @media (max-width: 900px) {
+            .main-content { grid-template-columns: 1fr; } /* Stack notices below info */
+            .info-grid { grid-template-columns: 1fr; } /* Stack cards */
+            .welcome-section { flex-direction: column; text-align: center; }
+            .user-photo { margin-bottom: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-header">
+        <h1><i class="fas fa-graduation-cap"></i> Student Portal</h1>
+        <a href="/logout" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+
+    <div class="main-content">
+        
+        <div class="left-section">
+            
+            <div class="welcome-section">
+                <img src="<%= user.photoUrl || 'https://i.ibb.co/D816h4h/dummy-student.jpg' %>" alt="Profile" class="user-photo">
+                <div class="welcome-info">
+                    <h2>Hello, <%= user.fullName %>!</h2>
+                    <p><i class="fas fa-id-badge"></i> Reg. No: <strong><%= user.username %></strong></p>
+                    <p><span class="status-badge">Student | Active</span></p>
+                </div>
+            </div>
+
+            <% 
+                const balanceFees = (user.totalFees || 0) - (user.feesPaid || 0);
+                const dob = user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString('en-GB') : 'N/A';
+                const admDate = user.dateOfAdmission ? new Date(user.dateOfAdmission).toLocaleDateString('en-GB') : 'N/A';
+            %>
+
+            <div class="info-grid">
+                
+                <div class="info-card">
+                    <h3 class="card-title"><i class="fas fa-book" style="color:#17a2b8;"></i> Academic Details</h3>
+                    <div class="card-row"><span class="card-label">Course:</span> <span class="card-val"><%= user.course %></span></div>
+                    <div class="card-row"><span class="card-label">Semester:</span> <span class="card-val"><%= user.semester %></span></div>
+                    <div class="card-row"><span class="card-label">Admission Date:</span> <span class="card-val"><%= admDate %></span></div>
+                    <div class="card-row"><span class="card-label">Date of Birth:</span> <span class="card-val"><%= dob %></span></div>
+                </div>
+
+                <div class="info-card">
+                    <h3 class="card-title"><i class="fas fa-rupee-sign" style="color:#28a745;"></i> Fee Status</h3>
+                    <div class="card-row"><span class="card-label">Total Fees:</span> <span class="card-val">₹ <%= (user.totalFees || 0).toLocaleString('en-IN') %></span></div>
+                    <div class="card-row"><span class="card-label">Paid Amount:</span> <span class="card-val fees-paid">₹ <%= (user.feesPaid || 0).toLocaleString('en-IN') %></span></div>
+                    <div style="margin: 15px 0; border-top: 1px dashed #ccc;"></div>
+                    <div class="card-row" style="font-size:1.1rem;">
+                        <span class="card-label">Balance Due:</span> 
+                        <span class="card-val <%= balanceFees > 0 ? 'fees-due' : 'fees-paid' %>">
+                            ₹ <%= balanceFees.toLocaleString('en-IN') %>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h3 class="card-title"><i class="fas fa-address-card" style="color:#ffc107;"></i> Contact Info</h3>
+                    <div class="card-row"><span class="card-label">Email:</span> <span class="card-val"><%= user.email %></span></div>
+                    <div class="card-row"><span class="card-label">Mobile:</span> <span class="card-val"><%= user.mobileNumber || 'N/A' %></span></div>
+                    <div class="card-row"><span class="card-label">Guardian:</span> <span class="card-val"><%= user.guardianName || 'N/A' %></span></div>
+                    <div class="card-row"><span class="card-label">Guardian No:</span> <span class="card-val"><%= user.guardianMobile || 'N/A' %></span></div>
+                </div>
+
+                <div class="info-card">
+                    <h3 class="card-title"><i class="fas fa-map-marker-alt" style="color:#dc3545;"></i> Address</h3>
+                    <p style="color:#555; line-height:1.6; margin:0;">
+                        <%= user.address || 'Address not updated.' %><br>
+                        <%= user.city %> <%= user.state ? ', ' + user.state : '' %> <%= user.pincode ? '- ' + user.pincode : '' %>
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="right-section">
+            <div class="notice-board">
+                <div class="notice-header">
+                    <i class="fas fa-bullhorn"></i> Notice Board
+                </div>
+                <ul class="notice-list">
+                    <% if(notices && notices.length > 0) { %>
+                        <% notices.forEach(notice => { %>
+                            <li class="notice-item">
+                                <span class="notice-date">
+                                    <i class="far fa-calendar-alt"></i> 
+                                    <%= new Date(notice.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) %>
+                                </span>
+                                <span class="notice-text"><%= notice.title %></span>
+                                
+                                <% if(notice.fileName) { %>
+                                    <a href="/uploads/notices/<%= notice.fileName %>" class="download-link" download>
+                                        <i class="fas fa-download"></i> Download Attachment
+                                    </a>
+                                <% } %>
+                            </li>
+                        <% }) %>
+                    <% } else { %>
+                        <li class="notice-item" style="text-align:center; color:#888;">No new notices available.</li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
