@@ -1,0 +1,72 @@
+{
+  "name": "college-erp-backend",
+  "version": "1.0.0",
+  "description": "Backend for College ERP System",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development node --loader tsx src/index.ts",
+    "build": "tsc",
+    "start": "cross-env NODE_ENV=production node dist/index.js",
+    "lint": "eslint src --ext .ts,.js",
+    "format": "prettier --write src",
+    "format:check": "prettier --check src",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage",
+    "seed": "node scripts/seed.js"
+  },
+  "keywords": [
+    "erp",
+    "college",
+    "management",
+    "express",
+    "mongodb"
+  ],
+  "author": "College ERP Team",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^8.0.0",
+    "dotenv": "^16.3.1",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.1.1",
+    "bcryptjs": "^2.4.3",
+    "validator": "^13.11.0",
+    "axios": "^1.6.0",
+    "multer": "^1.4.5-lts.1",
+    "cloudinary": "^1.41.0",
+    "nodemailer": "^6.9.7",
+    "redis": "^4.6.11",
+    "express-rate-limit": "^7.1.5",
+    "express-async-errors": "^3.1.1",
+    "zod": "^3.22.4",
+    "chalk": "^5.3.0",
+    "lodash-es": "^4.17.21",
+    "socket.io": "^4.7.2",
+    "pino": "^8.16.2",
+    "pino-pretty": "^10.2.3",
+    "uuid": "^9.0.1",
+    "date-fns": "^2.30.0",
+    "node-cron": "^3.0.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.10.0",
+    "@types/multer": "^1.4.11",
+    "@types/nodemailer": "^6.4.14",
+    "typescript": "^5.3.3",
+    "tsx": "^4.7.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.2",
+    "@typescript-eslint/parser": "^6.13.2",
+    "eslint": "^8.55.0",
+    "prettier": "^3.1.0",
+    "vitest": "^1.0.4",
+    "@vitest/ui": "^1.0.4",
+    "cross-env": "^7.0.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}
