@@ -37,7 +37,7 @@ College ERP is a comprehensive management system designed to streamline all aspe
 ### Core Modules
 - ✅ Authentication & Authorization
 - ✅ Role-Based Access Control (RBAC)
-- ✅ User Management
+- ✅ User Management (21 unique roles)
 - ✅ Student Management
 - ✅ Teacher Management
 - ✅ Department Management
@@ -55,7 +55,7 @@ College ERP is a comprehensive management system designed to streamline all aspe
 - ✅ Communication Hub
 - ✅ Reports & Analytics
 
-### User Roles
+### User Roles (21 Role-Based Dashboards)
 1. **Super Admin** - Full system access
 2. **College Admin** - Administrative privileges
 3. **Principal** - College leadership
@@ -85,219 +85,249 @@ College ERP is a comprehensive management system designed to streamline all aspe
 - npm >= 9.0.0
 - MongoDB >= 5.0
 - Redis >= 6.0
+- Docker & Docker Compose (optional but recommended)
 
-### Installation
+### Quick Start with Docker
 
-1. **Clone the repository**
 ```bash
+# Clone repository
 git clone https://github.com/rupeshbuddhu78-dev/ERP.git
 cd ERP
-```
 
-2. **Install dependencies**
-```bash
-npm install
-```
-
-3. **Setup environment variables**
-```bash
+# Setup environment
 cp .env.example .env
-# Edit .env with your configuration
-```
 
-4. **Start with Docker (Recommended)**
-```bash
+# Start all services
 docker-compose up -d
+
+# Access the application
+# Frontend: http://localhost:5173
+# Backend: http://localhost:5000
+# MongoDB: localhost:27017
+# Redis: localhost:6379
 ```
 
-Or **Start development servers**
+### Manual Setup
+
 ```bash
-# Terminal 1 - Backend
-cd backend && npm run dev
+# Install dependencies
+npm install
 
-# Terminal 2 - Frontend
-cd frontend && npm run dev
+# Backend setup
+cd backend
+npm install
+npm run dev
+
+# Frontend setup (new terminal)
+cd frontend
+npm install
+npm run dev
 ```
-
-5. **Access the application**
-- Frontend: http://localhost:5173
-- Backend API: http://localhost:5000
-- API Docs: http://localhost:5000/api-docs
 
 ## 📁 Project Structure
 
 ```
 ERP/
-├── frontend/                 # React frontend
+├── frontend/                    # React 19 + Vite + TypeScript
 │   ├── src/
-│   │   ├── components/      # Reusable components
-│   │   ├── pages/           # Page components
-│   │   ├── layouts/         # Layout components
-│   │   ├── hooks/           # Custom hooks
-│   │   ├── services/        # API services
-│   │   ├── redux/           # Redux store & slices
-│   │   ├── utils/           # Utility functions
-│   │   └── assets/          # Static assets
-│   ├── index.html
+│   │   ├── components/          # Reusable UI components
+│   │   ├── pages/               # Page components
+│   │   ├── layouts/             # Layout wrappers
+│   │   ├── hooks/               # Custom React hooks
+│   │   ├── services/            # API service layer
+│   │   ├── redux/               # Redux store & slices
+│   │   │   ├── slices/          # Redux state slices
+│   │   │   └── store.ts         # Redux store configuration
+│   │   ├── utils/               # Helper functions
+│   │   ├── assets/              # Images, icons, fonts
+│   │   ├── App.tsx
+│   │   ├── main.tsx
+│   │   └── index.css
+│   ├── package.json
 │   ├── vite.config.ts
-│   └── package.json
-│
-├── backend/                  # Express backend
-│   ├── src/
-│   │   ├── config/          # Configuration files
-│   │   ├── controllers/     # Route controllers
-│   │   ├── middleware/      # Express middleware
-│   │   ├── routes/          # API routes
-│   │   ├── models/          # MongoDB models
-│   │   ├── services/        # Business logic
-│   │   ├── validators/      # Input validation
-│   │   ├── repositories/    # Data access layer
-│   │   ├── utils/           # Utility functions
-│   │   ├── jobs/            # Scheduled jobs
-│   │   ├── sockets/         # Socket.IO events
-│   │   └── logs/            # Logging
-│   ├── Dockerfile
 │   ├── tsconfig.json
-│   └── package.json
+│   ├── Dockerfile
+│   └── index.html
 │
-├── docker-compose.yml        # Docker Compose configuration
-├── .env.example              # Environment variables template
-└── README.md                 # This file
+├── backend/                     # Express.js + TypeScript + MongoDB
+│   ├── src/
+│   │   ├── config/              # Configuration files
+│   │   │   └── database.ts      # MongoDB connection
+│   │   ├── controllers/         # Request handlers
+│   │   ├── middleware/          # Express middleware
+│   │   │   ├── errorHandler.ts
+│   │   │   ├── requestLogger.ts
+│   │   │   └── auth.ts
+│   │   ├── routes/              # API endpoints
+│   │   │   ├── auth.routes.ts
+│   │   │   ├── user.routes.ts
+│   │   │   ├── student.routes.ts
+│   │   │   └── teacher.routes.ts
+│   │   ├── models/              # Mongoose schemas
+│   │   ├── services/            # Business logic
+│   │   ├── validators/          # Input validation (Zod)
+│   │   ├── repositories/        # Data access layer
+│   │   ├── utils/               # Utility functions
+│   │   │   └── logger.ts        # Pino logger
+│   │   ├── jobs/                # Scheduled tasks
+│   │   ├── sockets/             # Socket.IO events
+│   │   ├── logs/                # Log files
+│   │   ├── index.ts             # Server entry point
+│   │   └── types/               # TypeScript type definitions
+│   ├── package.json
+│   ├── tsconfig.json
+│   ├── .eslintrc.json
+│   ├── .prettierrc.json
+│   ├── Dockerfile
+│   └── dist/                    # Compiled output
+│
+├── docker-compose.yml           # Multi-container setup
+├── .env.example                 # Environment variables template
+├── .gitignore
+├── README.md                    # This file
+└── package.json                 # Root workspace configuration
 ```
 
 ## 🔐 Security Features
 
-- JWT-based authentication with refresh tokens
-- Bcrypt password hashing
-- Role-based access control (RBAC)
-- CORS protection
-- Helmet for security headers
-- Rate limiting
-- Input validation with Zod
-- SQL/NoSQL injection prevention
-- HTTPS support
-- Audit logging
+- **JWT Authentication** - Secure token-based authentication
+- **Refresh Tokens** - Long-lived refresh tokens for seamless UX
+- **Password Hashing** - Bcrypt password encryption
+- **Role-Based Access Control** - Fine-grained permissions
+- **CORS Protection** - Cross-Origin Resource Sharing controls
+- **Helmet Security Headers** - HTTP security headers
+- **Rate Limiting** - Request throttling
+- **Input Validation** - Zod schema validation
+- **SQL/NoSQL Injection Prevention** - Parameterized queries
+- **HTTPS Support** - SSL/TLS encryption
+- **Audit Logging** - Complete activity tracking
+- **Request Sanitization** - XSS protection
 
-## 📊 Database Schema
+## 📊 Database Collections
 
-### Collections
-- `users` - User accounts with roles
-- `students` - Student information
-- `teachers` - Teacher information
-- `parents` - Parent/Guardian information
-- `employees` - Employee information
-- `departments` - Department details
-- `courses` - Course information
-- `subjects` - Subject details
-- `classes` - Class information
-- `semesters` - Semester details
-- `attendance` - Attendance records
-- `fees` - Fee information
-- `payments` - Payment records
-- `library_books` - Book inventory
-- `issued_books` - Book issue records
-- `hostel_rooms` - Room information
-- `hostels` - Hostel details
-- `transport` - Transport information
-- `routes` - Transport routes
-- `drivers` - Driver information
-- `vehicles` - Vehicle information
-- `inventory` - Inventory items
-- `vendors` - Vendor information
-- `purchases` - Purchase orders
-- `payrolls` - Payroll records
-- `placements` - Placement records
-- `companies` - Company information
-- `internships` - Internship programs
-- `assignments` - Assignments
-- `study_materials` - Study materials
-- `results` - Exam results
-- `exams` - Exam information
-- `marks` - Mark records
-- `events` - Events and activities
-- `notices` - Notices and announcements
-- `complaints` - Student complaints
-- `certificates` - Certificates
-- `notifications` - User notifications
-- `audit_logs` - Audit trail
-- `settings` - System settings
+```
+users                 - User accounts and profiles
+roles                 - Role definitions
+permissions           - Permission mappings
+students              - Student information
+teachers              - Teacher/Faculty information
+parents               - Parent/Guardian information
+employees             - HR employee records
+departments           - Department details
+courses               - Course offerings
+subjects              - Subject information
+classes               - Class/Section details
+semesters             - Semester information
+attendance            - Attendance records
+fees                  - Fee structures
+payments              - Payment records
+library_books         - Book inventory
+issued_books          - Book issue/return logs
+hostel_rooms          - Room allocations
+hostels               - Hostel information
+transport             - Transport routes & schedules
+routes                - Route details
+drivers               - Driver information
+vehicles              - Vehicle inventory
+inventory             - Asset inventory
+vendors               - Vendor information
+purchases             - Purchase orders
+payrolls              - Payroll records
+placements            - Placement information
+companies             - Company details
+internships           - Internship programs
+assignments           - Assignment submissions
+study_materials       - Study resource library
+results               - Exam results
+exams                 - Exam information
+marks                 - Grade records
+events                - College events
+notices               - Official announcements
+complaints            - Student complaints
+certificates          - Certificate issuance
+notifications         - User notifications
+audit_logs            - System audit trail
+settings              - System configuration
+```
 
 ## 🔧 API Documentation
 
-API documentation is available at `/api-docs` when the server is running.
+### Base URL
+```
+http://localhost:5000/api/v1
+```
 
 ### Authentication Endpoints
 ```
-POST   /api/auth/register      - Register new user
-POST   /api/auth/login         - User login
-POST   /api/auth/refresh       - Refresh token
-POST   /api/auth/logout        - User logout
+POST   /auth/register          Register new user
+POST   /auth/login             User login
+POST   /auth/refresh           Refresh token
+POST   /auth/logout            User logout
+POST   /auth/forgot-password   Request password reset
+POST   /auth/reset-password    Reset password
 ```
 
-### User Endpoints
+### User Management
 ```
-GET    /api/users              - List users
-GET    /api/users/:id          - Get user details
-POST   /api/users              - Create user
-PUT    /api/users/:id          - Update user
-DELETE /api/users/:id          - Delete user
-```
-
-### Student Endpoints
-```
-GET    /api/students           - List students
-GET    /api/students/:id       - Get student details
-POST   /api/students           - Create student
-PUT    /api/students/:id       - Update student
-DELETE /api/students/:id       - Delete student
+GET    /users                  List all users
+GET    /users/:id              Get user details
+POST   /users                  Create new user
+PUT    /users/:id              Update user
+DELETE /users/:id              Delete user
+PATCH  /users/:id/role         Change user role
+GET    /users/profile/me       Get logged-in user profile
+PUT    /users/profile/me       Update own profile
 ```
 
-## 🐳 Docker Deployment
-
-### Build Images
-```bash
-docker-compose build
+### Student Module
+```
+GET    /students               List students
+GET    /students/:id           Get student details
+POST   /students               Create student
+PUT    /students/:id           Update student
+DELETE /students/:id           Delete student
+GET    /students/:id/attendance   Get attendance
+GET    /students/:id/fees      Get fee details
+GET    /students/:id/results   Get exam results
+POST   /students/:id/certificates   Issue certificate
 ```
 
-### Start Services
-```bash
-docker-compose up -d
+### Teacher Module
+```
+GET    /teachers               List teachers
+GET    /teachers/:id           Get teacher details
+POST   /teachers               Create teacher
+PUT    /teachers/:id           Update teacher
+DELETE /teachers/:id           Delete teacher
+GET    /teachers/:id/classes   Get assigned classes
+POST   /teachers/:id/marks     Submit marks
+GET    /teachers/:id/attendance   View attendance
 ```
 
-### View Logs
-```bash
-docker-compose logs -f
+### Dashboard & Analytics
+```
+GET    /dashboard              Get dashboard data
+GET    /analytics/students     Student analytics
+GET    /analytics/attendance   Attendance analytics
+GET    /analytics/fees         Fee analytics
+GET    /analytics/results      Result analytics
+GET    /reports/generate       Generate reports
 ```
 
-### Stop Services
-```bash
-docker-compose down
-```
+## 🎨 UI/UX Design
 
-## 📦 Production Deployment
+The frontend follows modern design principles inspired by:
+- **Linear** - Clean, minimalist interface
+- **Vercel** - Smooth animations and transitions
+- **Stripe** - Professional color scheme and typography
 
-### Frontend
-```bash
-cd frontend
-npm run build
-# Deploy dist/ folder to CDN or static hosting
-```
-
-### Backend
-```bash
-cd backend
-npm run build
-# Deploy dist/ folder to server
-```
-
-### Environment Setup
-1. Configure environment variables for production
-2. Setup MongoDB Atlas or self-hosted MongoDB
-3. Configure Redis
-4. Setup Cloudinary account
-5. Configure SMTP for email
-6. Setup SSL certificates
-7. Configure domain and DNS
+### Design Features
+- Responsive grid layout
+- Dark mode support
+- Smooth animations
+- Accessible components (WCAG 2.1)
+- Mobile-first approach
+- Consistent spacing and typography
 
 ## 🧪 Testing
 
@@ -309,13 +339,16 @@ cd backend && npm run test
 cd frontend && npm run test
 
 # Coverage reports
-cd backend && npm run test:coverage
+npm run test:coverage
+
+# E2E tests
+npm run test:e2e
 ```
 
 ## 📝 Code Quality
 
 ```bash
-# Linting
+# Lint code
 npm run lint
 
 # Format code
@@ -323,26 +356,106 @@ npm run format
 
 # Check formatting
 npm run format:check
+
+# Type checking
+npm run type-check
 ```
+
+## 🐳 Docker Deployment
+
+### Development
+```bash
+docker-compose up -d
+docker-compose logs -f
+```
+
+### Production
+```bash
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+## 📦 Build & Deploy
+
+### Frontend Build
+```bash
+cd frontend
+npm run build
+# Output: dist/ folder
+```
+
+### Backend Build
+```bash
+cd backend
+npm run build
+# Output: dist/ folder
+```
+
+### Production Deployment
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed instructions.
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add AmazingFeature'`)
-4. Push to branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+2. Create feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open Pull Request
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+MIT License - see LICENSE file for details
 
-## 🎓 Support
+## 📞 Support
 
-For support, email support@collegeerp.com or open an issue in the repository.
+- Email: support@collegeerp.com
+- Issues: [GitHub Issues](https://github.com/rupeshbuddhu78-dev/ERP/issues)
+- Discussions: [GitHub Discussions](https://github.com/rupeshbuddhu78-dev/ERP/discussions)
 
-## 🌟 Acknowledgments
+## 🌟 Roadmap
 
-- Built with modern web technologies
-- Inspired by platforms like Linear, Vercel, and Stripe
-- Designed for scalability and performance
+### Phase 1 (Current)
+- ✅ Core architecture setup
+- ✅ Authentication system
+- ✅ Basic CRUD operations
+- ✅ Docker support
+
+### Phase 2
+- Mobile app (React Native)
+- Advanced reporting
+- AI-powered analytics
+- Multi-language support
+
+### Phase 3
+- Biometric integration
+- QR code attendance
+- RFID support
+- Multi-campus management
+
+## 👨‍💻 Tech Stack Summary
+
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React 19, Vite, TypeScript, Tailwind CSS |
+| Backend | Node.js, Express, TypeScript |
+| Database | MongoDB, Mongoose |
+| Cache | Redis |
+| File Storage | Cloudinary |
+| Email | Nodemailer |
+| Real-time | Socket.IO |
+| Auth | JWT, Bcrypt |
+| Validation | Zod |
+| Logging | Pino |
+| Testing | Vitest |
+| CI/CD | GitHub Actions |
+| Containerization | Docker |
+
+## 🎓 Acknowledgments
+
+- Built with cutting-edge web technologies
+- Inspired by leading SaaS platforms
+- Designed for enterprise scalability
+- Optimized for performance and security
+
+---
+
+**Made with ❤️ by the College ERP Team**
